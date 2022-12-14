@@ -27,8 +27,32 @@ RUN \
   sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config && \
   usermod --shell /bin/bash abc && \
   rm -rf \
-    /tmp/*
-
+    /tmp/* \
+  echo "**** install golang ****" \
+  wget https://golang.org/dl/go1.18.1.linux-amd64.tar.gz \
+  tar -C /usr/local -xzf go1.18.1.linux-amd64.tar.gz \
+  export PATH=$PATH:/usr/local/go/bin \
+  touch ~/.bash_profile \
+  echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bash_profile \
+  echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile \
+  go version \
+  echo "**** install php ****" \
+  apk add php \
+  php -v \
+  apk add php-gd \
+  apk add php-curl \
+  apk add php-sqlite3 \
+  apk add php-pgsql \
+  php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+  php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
+  php composer-setup.php \
+  php -r "unlink('composer-setup.php');" \
+  mv composer.phar /usr/local/bin/composer \
+  echo "**** install node ****"
+  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash \
+  nvm install latest \
+  nodepath=$(which node); sudo ln -s $nodepath /usr/bin/node
+  
 # add local files
 COPY /root /
 
